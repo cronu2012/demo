@@ -18,7 +18,6 @@ public class SimpleUseCaseImpl implements SimpleUseCaseApi {
 
     @Override
     public void send(String message) {
-
         try {
             messageSender.sendSimpleTask(message);
         } catch (Exception e) {
@@ -28,6 +27,6 @@ public class SimpleUseCaseImpl implements SimpleUseCaseApi {
 
     @Override
     public void execute(String message) {
-        log.info(String.format("%s simple-received: %s",MessageSender.class.getSimpleName() , message));
+        log.info(String.format("%s simple-received: %s",SimpleUseCaseImpl.class.getSimpleName() , message));
     }
 }

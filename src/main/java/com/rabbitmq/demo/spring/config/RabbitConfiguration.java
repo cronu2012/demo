@@ -75,10 +75,10 @@ public class RabbitConfiguration {
 //        return BindingBuilder.bind(queueThree()).to(exchange()).with(ROUTING_KEY_TWO);
 //    }
 
-    @Bean
-    public MessageListenerAdapter listenerAdapter(Receiver receiver){
-        return new MessageListenerAdapter(receiver, "receiveMessage");
-    }
+//    @Bean
+//    public MessageListenerAdapter listenerAdapter(Receiver receiver){
+//        return new MessageListenerAdapter(receiver, "receiveMessage");
+//    }
 
 
 
