@@ -17,9 +17,14 @@ public class RabbitController {
     private final SimpleUseCaseApi simpleUseCase;
 
     @GetMapping(value = "simple")
-    public String simple(@RequestParam String message){
+    public ResponseEntity<?> simple(@RequestParam String message){
 
+        simpleUseCase.send(message);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body();
+        SimpleResponse response = new SimpleResponse();
+        response.setResult("success");
+        response.setMessage(message);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 }
