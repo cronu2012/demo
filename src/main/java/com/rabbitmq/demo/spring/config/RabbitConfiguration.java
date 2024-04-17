@@ -1,11 +1,9 @@
 package com.rabbitmq.demo.spring.config;
 
-import org.springframework.amqp.core.*;
-import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
+import com.rabbitmq.demo.adapter.in.event.MessageListener;
+import org.springframework.amqp.core.Queue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.sound.midi.Receiver;
 
 
 /**
@@ -15,10 +13,9 @@ import javax.sound.midi.Receiver;
 public class RabbitConfiguration {
 
 
-
     public static final String QUEUE_SIMPLE = "queue.simple";
 
-    public static final String QUEUE_ONE = "queue.one";
+    public static final String QUEUE_WORK = "queue.work";
 
     public static final String QUEUE_TWO = "queue.two";
 
@@ -35,6 +32,21 @@ public class RabbitConfiguration {
         return new Queue(QUEUE_SIMPLE);
     }
 
+    @Bean
+    public Queue queueWork() {return new Queue(QUEUE_WORK);}
+
+    private static class WorkTypeReceiverConfig{
+
+       @Bean
+        public MessageListener.WorkReceiver receiver1(){
+           return new MessageListener.WorkReceiver(1);
+       }
+
+        @Bean
+        public MessageListener.WorkReceiver receiver2(){
+            return new MessageListener.WorkReceiver(2);
+        }
+    }
 
 
 //    @Bean
@@ -79,7 +91,6 @@ public class RabbitConfiguration {
 //    public MessageListenerAdapter listenerAdapter(Receiver receiver){
 //        return new MessageListenerAdapter(receiver, "receiveMessage");
 //    }
-
 
 
 }
