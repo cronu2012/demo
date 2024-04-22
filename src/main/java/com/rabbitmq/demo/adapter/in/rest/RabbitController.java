@@ -27,4 +27,5 @@ public class RabbitController {
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
+
 }

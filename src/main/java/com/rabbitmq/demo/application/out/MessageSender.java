@@ -19,7 +19,7 @@ public class MessageSender {
 
     private final Queue queue;
 
-    AtomicInteger dot;
+    AtomicInteger dots;
 
     AtomicInteger count ;
 
@@ -29,6 +29,19 @@ public class MessageSender {
         log.info(String.format("%s simple-send: %s",MessageSender.class.getSimpleName() , message));
     }
 
+    public void sendWorkTask() {
+        StringBuilder builder = new StringBuilder("Hello");
+        if (dots.incrementAndGet() == 4) {
+            dots.set(1);
+        }
+        for (int i = 0; i < dots.get(); i++) {
+            builder.append('.');
+        }
+        builder.append(count.incrementAndGet());
+        String message = builder.toString();
+        rabbitTemplate.convertAndSend(queue.getName(), message);
+        System.out.println(" [x] Sent '" + message + "'");
+    }
 
 
 }
