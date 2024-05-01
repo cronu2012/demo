@@ -2,35 +2,33 @@ package com.rabbitmq.demo.application.out;
 
 import com.rabbitmq.demo.spring.config.RabbitConfiguration;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class MessageSender {
 
-    private static final Logger log = LoggerFactory.getLogger(MessageSender.class);
     private final RabbitTemplate rabbitTemplate;
 
-    private final Queue queue;
+    private AtomicInteger dots;
 
-    AtomicInteger dots;
-
-    AtomicInteger count ;
+    private AtomicInteger count;
 
 
-    public void sendSimpleTask(String message){
+    public void sendSimpleTask(String message) {
         rabbitTemplate.convertAndSend(RabbitConfiguration.QUEUE_SIMPLE, message);
-        log.info(String.format("%s simple-send: %s",MessageSender.class.getSimpleName() , message));
+        log.info("{} simple-send: {}", MessageSender.class.getSimpleName(), message);
     }
 
-    public void sendWorkTask() {
-        StringBuilder builder = new StringBuilder("Hello");
+    public void sendWorkTask(String message) {
+        StringBuilder builder = new StringBuilder(message);
         if (dots.incrementAndGet() == 4) {
             dots.set(1);
         }
@@ -38,9 +36,9 @@ public class MessageSender {
             builder.append('.');
         }
         builder.append(count.incrementAndGet());
-        String message = builder.toString();
-        rabbitTemplate.convertAndSend(queue.getName(), message);
-        System.out.println(" [x] Sent '" + message + "'");
+        String msg = builder.toString();
+        rabbitTemplate.convertAndSend(RabbitConfiguration.QUEUE_WORK, msg);
+        log.info("{} [x] Sent work-task模式: {}", MessageSender.class.getSimpleName(), msg);
     }
 
 

@@ -2,8 +2,11 @@ package com.rabbitmq.demo.spring.config;
 
 import com.rabbitmq.demo.adapter.in.event.MessageListener;
 import org.springframework.amqp.core.Queue;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -11,7 +14,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class RabbitConfiguration {
-
 
     public static final String QUEUE_SIMPLE = "queue.simple";
 
@@ -28,24 +30,35 @@ public class RabbitConfiguration {
     public static final String ROUTING_KEY_TWO = "routing-key.two";
 
     @Bean
+    @Qualifier("queueSimple")
     public Queue queueSimple() {
-        return new Queue(QUEUE_SIMPLE);
+        return new Queue(QUEUE_SIMPLE, true);
     }
 
     @Bean
-    public Queue queueWork() {return new Queue(QUEUE_WORK);}
+    @Qualifier("queueWork")
+    public Queue queueWork() {
+        return new Queue(QUEUE_WORK, true);
+    }
 
-    private static class WorkTypeReceiverConfig{
+    @Bean
+    public AtomicInteger dots() {
+        return new AtomicInteger(0);
+    }
 
-       @Bean
-        public MessageListener.WorkReceiver receiver1(){
-           return new MessageListener.WorkReceiver(1);
-       }
+    @Bean
+    public AtomicInteger count() {
+        return new AtomicInteger(0);
+    }
 
-        @Bean
-        public MessageListener.WorkReceiver receiver2(){
-            return new MessageListener.WorkReceiver(2);
-        }
+    @Bean
+    public MessageListener.WorkReceiver receiver1() {
+        return new MessageListener.WorkReceiver("Consumer-A");
+    }
+
+    @Bean
+    public MessageListener.WorkReceiver receiver2() {
+        return new MessageListener.WorkReceiver("Consumer-B");
     }
 
 
