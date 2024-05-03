@@ -1,9 +1,9 @@
 package com.rabbitmq.demo.adapter.in.rest;
 
-import com.rabbitmq.demo.application.in.simple.api.SimpleUseCaseApi;
-import com.rabbitmq.demo.application.in.simple.api.WorkTaskUseCaseApi;
+import com.rabbitmq.demo.application.in.factory.QueueService;
+import com.rabbitmq.demo.application.in.simple.SimpleRabbitService;
+import com.rabbitmq.demo.application.in.work.WorkTaskRabbitService;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,31 +16,43 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/rabbitmq")
 public class RabbitController {
 
-    private final SimpleUseCaseApi simpleUseCase;
+    private final QueueService queueService;
 
-    private final WorkTaskUseCaseApi workTaskUseCase;
 
-    @GetMapping(value = "simple")
+    @GetMapping(value = SimpleRabbitService.RABBIT_TYPE)
     public ResponseEntity<?> simple(@RequestParam String message){
+        String rabbitType = SimpleRabbitService.RABBIT_TYPE;
 
-        simpleUseCase.send(message);
+        queueService.queueSend(message, rabbitType);
 
-        SimpleResponse response = new SimpleResponse();
-        response.setResult("success");
-        response.setMessage(message);
+        SimpleResponse response = getResponse(message);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping(value = "worktask")
+
+
+    @GetMapping(value = WorkTaskRabbitService.RABBIT_TYPE)
     public ResponseEntity<?> workTask(@RequestParam String message){
+        String rabbitType = WorkTaskRabbitService.RABBIT_TYPE;
 
-        workTaskUseCase.send(message);
+        queueService.queueSend(message, rabbitType);
 
+        SimpleResponse response = getResponse(message);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    /**
+     * 生成 Response
+     *
+     * @param message 發送訊息
+     * @return SimpleResponse
+     */
+    private SimpleResponse getResponse(String message) {
         SimpleResponse response = new SimpleResponse();
         response.setResult("success");
         response.setMessage(message);
-
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return response;
     }
 }

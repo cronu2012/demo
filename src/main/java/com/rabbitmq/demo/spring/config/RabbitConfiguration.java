@@ -1,6 +1,8 @@
 package com.rabbitmq.demo.spring.config;
 
 import com.rabbitmq.demo.adapter.in.event.MessageListener;
+import com.rabbitmq.demo.application.in.simple.SimpleRabbitService;
+import com.rabbitmq.demo.application.in.work.WorkTaskRabbitService;
 import org.springframework.amqp.core.Queue;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -15,9 +17,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Configuration
 public class RabbitConfiguration {
 
-    public static final String QUEUE_SIMPLE = "queue.simple";
+    public static final String CLASSIC = "queue.";
 
-    public static final String QUEUE_WORK = "queue.work";
+    public static final String QUEUE_SIMPLE = CLASSIC + SimpleRabbitService.RABBIT_TYPE;
+
+    public static final String QUEUE_WORK = CLASSIC + WorkTaskRabbitService.RABBIT_TYPE;
 
     public static final String QUEUE_TWO = "queue.two";
 
@@ -53,12 +57,12 @@ public class RabbitConfiguration {
 
     @Bean
     public MessageListener.WorkReceiver receiver1() {
-        return new MessageListener.WorkReceiver("Consumer-A");
+        return new MessageListener.WorkReceiver("A消費者");
     }
 
     @Bean
     public MessageListener.WorkReceiver receiver2() {
-        return new MessageListener.WorkReceiver("Consumer-B");
+        return new MessageListener.WorkReceiver("B消費者");
     }
 
 
