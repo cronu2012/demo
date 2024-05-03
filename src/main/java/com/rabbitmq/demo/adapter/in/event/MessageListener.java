@@ -27,7 +27,7 @@ public class MessageListener {
     }
 
     /**
-     * Work模式 Queue 接收
+     * WorkTask模式 Queue 接收
      *
      */
     @RabbitListener(queues = RabbitConfiguration.QUEUE_WORK)
