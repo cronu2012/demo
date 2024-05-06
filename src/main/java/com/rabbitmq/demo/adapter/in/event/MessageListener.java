@@ -2,6 +2,9 @@ package com.rabbitmq.demo.adapter.in.event;
 
 import com.rabbitmq.demo.application.in.factory.QueueService;
 import com.rabbitmq.demo.application.in.simple.SimpleRabbitService;
+import com.rabbitmq.demo.application.in.work.FirstConsumer;
+import com.rabbitmq.demo.application.in.work.SecondConsumer;
+import com.rabbitmq.demo.application.in.work.WorkTaskConsumer;
 import com.rabbitmq.demo.spring.config.RabbitConfiguration;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,15 +35,25 @@ public class MessageListener {
      */
     @RabbitListener(queues = RabbitConfiguration.QUEUE_WORK)
     public static class WorkReceiver {
-        private final String instance;
+        private final int instance;
 
-        public WorkReceiver(String instance) {
+        private WorkTaskConsumer consumer;
+
+        public WorkReceiver(int instance) {
             this.instance = instance;
         }
 
         @RabbitHandler
         public void receiverWork(String in) throws InterruptedException {
             log.info("instance {} [x] Received work-task模式 {}", this.instance, in);
+
+            if(instance == 1){
+                consumer = new FirstConsumer();
+            }else {
+                consumer = new SecondConsumer();
+            }
+
+            consumer.execute(in);
         }
 
     }

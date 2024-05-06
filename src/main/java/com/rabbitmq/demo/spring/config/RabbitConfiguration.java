@@ -3,6 +3,7 @@ package com.rabbitmq.demo.spring.config;
 import com.rabbitmq.demo.adapter.in.event.MessageListener;
 import com.rabbitmq.demo.application.in.simple.SimpleRabbitService;
 import com.rabbitmq.demo.application.in.work.WorkTaskRabbitService;
+import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -27,7 +28,9 @@ public class RabbitConfiguration {
 
     public static final String QUEUE_THREE = "queue.three";
 
-    public static final String TOPIC_EXCHANGE = "demo.exchange";
+    public static final String FANOUT_EXCHANGE = "fanout.exchange";
+
+    public static final String TOPIC_EXCHANGE = "topic.exchange";
 
     public static final String ROUTING_KEY_ONE = "routing-key.one";
 
@@ -57,22 +60,31 @@ public class RabbitConfiguration {
 
     @Bean
     public MessageListener.WorkReceiver receiver1() {
-        return new MessageListener.WorkReceiver("A消費者");
+        return new MessageListener.WorkReceiver(1);
     }
 
     @Bean
     public MessageListener.WorkReceiver receiver2() {
-        return new MessageListener.WorkReceiver("B消費者");
+        return new MessageListener.WorkReceiver(2);
     }
 
+    @Bean
+    public FanoutExchange fanoutExchange(){
+        return new FanoutExchange(TOPIC_EXCHANGE);
+    }
+
+    @Bean
+    @Qualifier("queueFanoutA")
+    public Queue queueFanoutA() {
+        return new Queue(QUEUE_SIMPLE, true);
+    }
 
 //    @Bean
 //    TopicExchange topicExchange() {
 //        return new TopicExchange(TOPIC_EXCHANGE);
 //    }
 //
-//    @Bean
-//    FanoutExchange fanoutExchange(){}{return }
+
 //
 //    @Bean
 //    public Queue queueOne() {
