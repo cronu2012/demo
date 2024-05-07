@@ -3,6 +3,8 @@ package com.rabbitmq.demo.spring.config;
 import com.rabbitmq.demo.adapter.in.event.MessageListener;
 import com.rabbitmq.demo.application.in.simple.SimpleRabbitService;
 import com.rabbitmq.demo.application.in.work.WorkTaskRabbitService;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,6 +26,12 @@ public class RabbitConfiguration {
 
     public static final String QUEUE_WORK = CLASSIC + WorkTaskRabbitService.RABBIT_TYPE;
 
+    public static final String QUEUE_FAN_A = CLASSIC + "fanout.a";
+
+    public static final String QUEUE_FAN_B = CLASSIC + "fanout.b";
+
+    public static final String QUEUE_FAN_C = CLASSIC + "fanout.c";
+
     public static final String QUEUE_TWO = "queue.two";
 
     public static final String QUEUE_THREE = "queue.three";
@@ -37,13 +45,11 @@ public class RabbitConfiguration {
     public static final String ROUTING_KEY_TWO = "routing-key.two";
 
     @Bean
-    @Qualifier("queueSimple")
     public Queue queueSimple() {
         return new Queue(QUEUE_SIMPLE, true);
     }
 
     @Bean
-    @Qualifier("queueWork")
     public Queue queueWork() {
         return new Queue(QUEUE_WORK, true);
     }
@@ -74,9 +80,23 @@ public class RabbitConfiguration {
     }
 
     @Bean
-    @Qualifier("queueFanoutA")
-    public Queue queueFanoutA() {
-        return new Queue(QUEUE_SIMPLE, true);
+    public Queue queueFanA() {
+        return new Queue(QUEUE_FAN_A, true);
+    }
+
+    @Bean
+    public Queue queueFanB() {
+        return new Queue(QUEUE_FAN_B, true);
+    }
+
+    @Bean
+    public Binding binding1(FanoutExchange fanout) {
+        return BindingBuilder.bind(queueFanA()).to(fanout);
+    }
+
+    @Bean
+    public Binding binding2(FanoutExchange fanout) {
+        return BindingBuilder.bind(queueFanB()).to(fanout);
     }
 
 //    @Bean
