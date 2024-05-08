@@ -1,6 +1,6 @@
 package com.rabbitmq.demo.adapter.in.rest;
 
-import com.rabbitmq.demo.adapter.in.rest.delete.RabbitObject;
+import com.rabbitmq.demo.adapter.in.rest.crud.RabbitObject;
 import com.rabbitmq.demo.application.in.crud.CrudRabbitService;
 import com.rabbitmq.demo.application.in.factory.QueueService;
 import com.rabbitmq.demo.application.in.simple.SimpleRabbitService;

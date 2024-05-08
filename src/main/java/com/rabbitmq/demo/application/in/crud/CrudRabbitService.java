@@ -1,6 +1,6 @@
 package com.rabbitmq.demo.application.in.crud;
 
-import com.rabbitmq.demo.adapter.in.rest.delete.RabbitObject;
+import com.rabbitmq.demo.adapter.in.rest.crud.RabbitObject;
 import com.rabbitmq.demo.spring.config.RabbitConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.AmqpAdmin;
@@ -24,9 +24,9 @@ public class CrudRabbitService {
         AmqpAdmin amqpAdmin = context.getBean(AmqpAdmin.class);
 
         List<String> exchanges = request.getExchange();
-        log.info("{} 取出交換機 數量:{} 結果:{}",CLASS,exchanges.size(),exchanges);
+        log.info("{} Request交換機 數量:{} 結果:{}",CLASS,exchanges.size(),exchanges);
         List<String> queues = request.getQueue();
-        log.info("{} 取出隊列 數量:{} 結果:{}",CLASS,queues.size(),queues);
+        log.info("{} Request隊列 數量:{} 結果:{}",CLASS,queues.size(),queues);
         if (!exchanges.isEmpty()) {
             for (String exchangeName : exchanges) {
                 // 清除交換機

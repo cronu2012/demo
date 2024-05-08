@@ -1,4 +1,4 @@
-package com.rabbitmq.demo.adapter.in.rest.delete;
+package com.rabbitmq.demo.adapter.in.rest.crud;
 
 import lombok.Data;
 
