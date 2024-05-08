@@ -1,6 +1,5 @@
 package com.rabbitmq.demo.application.in.simple;
 
-import com.rabbitmq.demo.adapter.in.rest.SimpleResponse;
 import com.rabbitmq.demo.application.in.factory.RabbitService;
 import com.rabbitmq.demo.application.in.factory.RabbitType;
 import com.rabbitmq.demo.application.out.MessageSender;

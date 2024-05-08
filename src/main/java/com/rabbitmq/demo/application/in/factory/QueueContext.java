@@ -1,6 +1,6 @@
 package com.rabbitmq.demo.application.in.factory;
 
-import com.rabbitmq.demo.adapter.in.rest.SimpleResponse;
+import com.rabbitmq.demo.adapter.in.rest.RabbitResponse;
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.framework.Advised;
@@ -81,7 +81,7 @@ public class QueueContext implements ApplicationContextAware {
      */
     public void send(String message, String rabbitType) {
         RabbitService rabbitService = queueServiceMap.get(rabbitType);
-        SimpleResponse response = null;
+        RabbitResponse response = null;
         if (rabbitService == null) {
             log.error("獲取服務模式為空 所有服務模式為: {}", queueServiceMap);
         } else {

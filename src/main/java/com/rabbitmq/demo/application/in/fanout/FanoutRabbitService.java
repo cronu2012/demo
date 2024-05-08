@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class FanoutRabbitService implements RabbitService {
-
-
+    public static final String RABBIT_TYPE = "fanout";
 
     @Override
     public void send(String message) {

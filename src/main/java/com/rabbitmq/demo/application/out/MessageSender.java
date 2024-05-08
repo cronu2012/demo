@@ -6,20 +6,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Service
-@AllArgsConstructor
 public class MessageSender {
-
     private final RabbitTemplate rabbitTemplate;
 
-    private AtomicInteger dots;
+    AtomicInteger dots = new AtomicInteger(0);
 
-    private AtomicInteger count;
+    AtomicInteger count = new AtomicInteger(0);
+
+    public MessageSender(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
 
 
     public void sendSimpleTask(String message) {

@@ -3,7 +3,7 @@ package com.rabbitmq.demo.adapter.in.rest;
 import lombok.Data;
 
 @Data
-public class SimpleResponse {
+public class RabbitResponse {
 
     String result;
 

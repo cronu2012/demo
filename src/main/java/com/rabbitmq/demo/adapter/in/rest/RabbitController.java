@@ -1,15 +1,14 @@
 package com.rabbitmq.demo.adapter.in.rest;
 
+import com.rabbitmq.demo.adapter.in.rest.delete.RabbitObject;
+import com.rabbitmq.demo.application.in.crud.CrudRabbitService;
 import com.rabbitmq.demo.application.in.factory.QueueService;
 import com.rabbitmq.demo.application.in.simple.SimpleRabbitService;
 import com.rabbitmq.demo.application.in.work.WorkTaskRabbitService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
@@ -18,6 +17,7 @@ public class RabbitController {
 
     private final QueueService queueService;
 
+    private final CrudRabbitService crudRabbitService;
 
     @GetMapping(value = SimpleRabbitService.RABBIT_TYPE)
     public ResponseEntity<?> simple(@RequestParam String message){
@@ -25,7 +25,7 @@ public class RabbitController {
 
         queueService.queueSend(message, rabbitType);
 
-        SimpleResponse response = getResponse(message);
+        RabbitResponse response = getResponse(message);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -38,7 +38,17 @@ public class RabbitController {
 
         queueService.queueSend(message, rabbitType);
 
-        SimpleResponse response = getResponse(message);
+        RabbitResponse response = getResponse(message);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("delete")
+    public ResponseEntity<?> delete(@RequestBody RabbitObject request){
+
+        crudRabbitService.delete(request);
+
+        RabbitResponse response = getResponse("已刪除");
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -49,8 +59,8 @@ public class RabbitController {
      * @param message 發送訊息
      * @return SimpleResponse
      */
-    private SimpleResponse getResponse(String message) {
-        SimpleResponse response = new SimpleResponse();
+    private RabbitResponse getResponse(String message) {
+        RabbitResponse response = new RabbitResponse();
         response.setResult("success");
         response.setMessage(message);
         return response;
