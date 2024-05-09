@@ -24,7 +24,7 @@ public class MessageListener {
      *
      * @param message
      */
-//    @RabbitListener(queues = RabbitConfiguration.QUEUE_SIMPLE)
+    @RabbitListener(queues = RabbitConfiguration.QUEUE_SIMPLE)
     public void receiverSimple(String message) {
         queueService.queueReceive(message, SimpleRabbitService.RABBIT_TYPE);
     }
@@ -33,7 +33,7 @@ public class MessageListener {
      * WorkTask模式 Queue 接收
      *
      */
-//    @RabbitListener(queues = RabbitConfiguration.QUEUE_WORK)
+    @RabbitListener(queues = RabbitConfiguration.QUEUE_WORK)
     public static class WorkReceiver {
         private final int instance;
 
@@ -43,7 +43,7 @@ public class MessageListener {
             this.instance = instance;
         }
 
-//        @RabbitHandler
+        @RabbitHandler
         public void receiverWork(String in) throws InterruptedException {
             log.info("instance {} [x] Received work-task模式 {}", this.instance, in);
 
