@@ -182,9 +182,9 @@ public class HttpUtils {
         Map<String, String> resMap = (StringUtils.isNotBlank(requestBodyStream))
                 ? readValue(requestBodyStream, LinkedHashMap.class) : new LinkedHashMap<>();
 
-        for (Map.Entry<String, String[]> each : params.entrySet()) {
-            resMap.put(each.getKey(), each.getValue()[0]);
-        }
+//        for (Map.Entry<String, String[]> each : params.entrySet()) {
+//            resMap.put(each.getKey(), each.getValue()[0]);
+//        }
         return resMap;
     }
 
