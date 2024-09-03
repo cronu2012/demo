@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 public class JsonDto {
-    @JsonProperty("Inter")
-    private String Inter;
-    @JsonProperty("Outer")
-    private String Outer;
+    @JsonProperty("BankCode")
+    private String BankCode;
+    @JsonProperty("BankName")
+    private String BankName;
 }

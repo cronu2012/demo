@@ -7,13 +7,16 @@ import com.rabbitmq.demo.application.in.factory.QueueService;
 import com.rabbitmq.demo.application.in.simple.SimpleRabbitService;
 import com.rabbitmq.demo.application.in.work.WorkTaskRabbitService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 @Controller
 @AllArgsConstructor
@@ -33,25 +36,16 @@ public class RabbitController {
         String resultReturn = "Operation Success";
         map.put("error_code",0);
         map.put("message",resultReturn);
-        map.put("inter",dto.getInter());
-        map.put("outer",dto.getOuter());
+        map.put("bankCOde",dto.getBankCode());
+        map.put("bankName",dto.getBankName());
 
-        return ResponseEntity.ok(map);
+        ResponseEntity.BodyBuilder response = ResponseEntity
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON);
+
+        return response.body(map);
     }
-    @RequestMapping("json2/isSuccess")
-    @ResponseBody
-    public Map<String, Object> jsonTest2(JsonDto dto) {
 
-        Map<String, Object> map = new HashMap<>();
-
-        String resultReturn = "Operation Success";
-        map.put("error_code",0);
-        map.put("message",resultReturn);
-        map.put("inter",dto.getInter());
-        map.put("outer",dto.getOuter());
-
-        return map;
-    }
 
     @GetMapping(value = SimpleRabbitService.RABBIT_TYPE)
     public ResponseEntity<?> simple(@RequestParam String message){

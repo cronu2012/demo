@@ -1,4 +1,4 @@
-package com.rabbitmq.demo.adapter.in;
+package com.rabbitmq.demo.spring.config;
 
 import java.util.Map;
 import java.util.TreeMap;
