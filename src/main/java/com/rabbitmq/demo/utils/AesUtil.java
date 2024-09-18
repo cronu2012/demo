@@ -1,17 +1,16 @@
-package com.rabbitmq.demo.spring.config;
+package com.rabbitmq.demo.utils;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPObject;
+import com.rabbitmq.tools.json.JSONUtil;
 
-import java.util.Base64;
+import java.util.*;
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 
 public class AesUtil {
     /**
@@ -54,38 +53,40 @@ public class AesUtil {
 
     public static void main(String[] args) throws Exception {
 
-        Map map = new HashMap();
-        map.put("amount", "20000");
-        map.put("clientIp", "185.177.125.118");
-        map.put("createdAt", "1642670220706");
-        map.put("currency", "INR");
-        map.put("mchNo", "M164266560x");
-        map.put("mchOrderNo", "202201201717009954494810");
-        map.put("payAmount", "0");
-        map.put("payOrderId", "Pocom76c665a2");
-        map.put("reqTime", "1642670259876");
-        map.put("state", "2");
-        map.put("subject", "jinbi");
-        String key = "lpppay7852314569";
-        String iv = "gfd3dw234234ds1223224thy";
+        /**
+         * {mchNo=M111,reqTime=1725637496635,
+         *  sign=74411B9F5F3857DAE20FC780E6D589BE, signType=MD5,
+         *  version=2.0}
+         */
+        TreeMap params = new TreeMap();
+        params.put("mchNo", "M111");
+        params.put("reqTime", "1725637496635");
+        params.put("signType", "MD5");
+        params.put("version", "2.0");
+        params.put("sign", "02F88DAD45D54745FCE309F56DA0126C");
+
+        String key = "d7c540d43a69ae8f";
+        String iv = "111";
+
         //加密
         //AES加密
-        byte[] encrypt = encryptAesGCM(JSONObject.toJSONString(map).getBytes(StandardCharsets.UTF_8), key, iv);
+        byte[] encrypt = encryptAesGCM(JSONObject.toJSONString(params).getBytes(StandardCharsets.UTF_8), key, iv);
         //base64加密
         String encode = Base64.getEncoder().encodeToString(encrypt);
+
         System.out.println("加密数据："+encode);
+        LinkedHashMap request = new LinkedHashMap<>();
+        request.put("key", "TTExMQ==");
+        request.put("data", encode);
+        System.out.println("加密請求："+ JSON.toJSONString(request));
 
         //解密
         //base64解密
         byte[] data =Base64.getDecoder().decode(encode);
-        //AES解密
+//        AES解密
         byte[] plaintext = decryptAesGCM(data, key, iv);
         String result = StrUtil.str(plaintext, StandardCharsets.UTF_8);
         System.out.println("解密数据："+ result);
 
-        JSONObject res = JSON.parseObject(result);
-        String orderId = res.getString("mchOrderNo");
-
-        System.out.println("訂單號："+ orderId);
     }
 }
