@@ -36,8 +36,7 @@ public class RabbitController {
         String resultReturn = "Operation Success";
         map.put("error_code",0);
         map.put("message",resultReturn);
-        map.put("bankCOde",dto.getBankCode());
-        map.put("bankName",dto.getBankName());
+
 
         ResponseEntity.BodyBuilder response = ResponseEntity
                 .ok()
