@@ -20,7 +20,7 @@ public class play {
 //        System.out.println("Time taken: " + (endTime - startTime) + " ms");
 //        System.out.println(paramMap);
 
-        String bankName = "ธนาคาร เกียรตินาคิน จ ากัด (มหาชน)(KKPaa1)(มหาชน)(AAA)";
+        String bankName = "ธนาคาร เกียรตินาคิน จ ากัด (มหาชน)(KKPม)(มหาชน)(AAA)";
 
         String bankCode = getBankCode2(bankName);
 
