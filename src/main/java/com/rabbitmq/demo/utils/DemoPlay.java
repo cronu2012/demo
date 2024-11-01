@@ -5,6 +5,8 @@ import java.util.regex.Pattern;
 
 public class DemoPlay {
 
+    private static final String json = "";
+
     public static void main(String[] args){
 
     }
