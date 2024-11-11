@@ -6,6 +6,7 @@ import com.rabbitmq.demo.application.in.crud.CrudRabbitService;
 import com.rabbitmq.demo.application.in.factory.QueueService;
 import com.rabbitmq.demo.application.in.simple.SimpleRabbitService;
 import com.rabbitmq.demo.application.in.work.WorkTaskRabbitService;
+import com.rabbitmq.demo.service.Play;
 import lombok.AllArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,27 @@ public class RabbitController {
     private final QueueService queueService;
 
     private final CrudRabbitService crudRabbitService;
+
+    private final Play play;
+
+    @RequestMapping("/test")
+    @ResponseBody
+    public ResponseEntity<?> test() {
+        play.test();
+
+        Map<String, Object> map = new HashMap<>();
+
+        String resultReturn = "Operation Success";
+        map.put("error_code",0);
+        map.put("message",resultReturn);
+
+
+        ResponseEntity.BodyBuilder response = ResponseEntity
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON);
+
+        return response.body(map);
+    }
 
     @RequestMapping("json1/isSuccess")
     @ResponseBody
