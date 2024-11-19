@@ -7,6 +7,8 @@ public class DemoPlay {
 
     private static final String json = "";
 
+    private static  int[] INT = {1, 2, 3};
+
     public static void main(String[] args){
 
     }
