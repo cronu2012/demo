@@ -2,7 +2,7 @@ package com.rabbitmq.demo.utils;
 
 
 import io.micrometer.common.util.StringUtils;
-import org.apache.commons.*;
+
 
 import java.util.Collection;
 import java.util.Map;

@@ -1,33 +1,140 @@
 package com.rabbitmq.demo.utils;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.NumberUtil;
+import lombok.Builder;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 public class play {
     public static void main(String... args){
-        long startTime = System.currentTimeMillis();
-//        Map<String, String> paramMap = new TreeMap<>();
-//
-//        String bankCode = "ธนาคาร ทหารไทยธนชาต(BAY)";
-//        if(bankCode != null && bankCode.matches("\\d+")){
-//            paramMap.put("bankCode", bankCode);
-//        } else {
-//            paramMap.put("bankCode", getBankCode(searchBankCode(bankCode)));
-//        }
-//        long endTime = System.currentTimeMillis();
-//        System.out.println("Time taken: " + (endTime - startTime) + " ms");
-//        System.out.println(paramMap);
 
-        String bankName = "ธนาคาร เกียรตินาคิน จ ากัด (มหาชน)(KKPม)(มหาชน)(AAA)";
+        String msm1 = "ktbcs.netbank\n" +
+                "ได้รับ +500.00 บาท เข้าบัญชี XXX-X-XX117-1 จากบัญชี กสิกรไทย XXX-X-XX596-5\n" +
+                "รับเงินสำเร็จ\n" +
+                "UID：10290";
 
-        String bankCode = getBankCode2(bankName);
+        String msm2 = "ktbcs.netbank\n" +
+                "ได้รับ +200.00 บาท เข้าบัญชี XXX-X-XX117-1 จากบัญชี ออมสิน XXXXXXX2988\n" +
+                "รับเงินสำเร็จ\n" +
+                "UID：10290";
 
-        System.out.println(bankCode);
-        long endTime = System.currentTimeMillis();
-        System.out.println("Time taken: " + (endTime - startTime) + " ms");
+        String msm3 = "ktbcs.netbank\n" +
+                "ได้รับ +55.00 บาท เข้าพร้อมเพย์ จากบัญชี กสิกรไทย XXX-X-XX740-6\n" +
+                "รับเงินสำเร็จ\n" +
+                "UID：10134";
+
+
+
+        BankMsmHandleDTO result1 = msgParse2(msm1);
+        BankMsmHandleDTO result2 = msgParse2(msm2);
+        BankMsmHandleDTO result3 = msgParse2(msm3);
+
+        System.out.println("BankMsmHandleDTO: " + result1);
+        System.out.println("BankMsmHandleDTO: " + result2);
+        System.out.println("BankMsmHandleDTO: " + result3);
+
     }
+
+    private static BankMsmHandleDTO msgParse2(String msm) {
+        try {
+            Assert.notEmpty(msm, "msm is empty");
+            if (!msm.contains("ได้รับ") && !msm.contains("รับเงินสำเร็จ")) {
+                return null;
+            }
+            String amountStr = msm.split("\\+")[1].split(" ")[0].replace(",", "");
+            Long amount = NumberUtil.mul(amountStr, "1000").longValue();
+
+            String bankAccount = "";
+            String bankCode = "";
+            if (msm.split("XXX-X-XX").length > 2) {
+                bankAccount = msm.split("XXX-X-XX")[2].replace("-", "").substring(0, 4);
+            } else if (msm.contains("XXXXXXX")) {
+                bankAccount = msm.split("XXXXXXX")[1].substring(0, 4);
+            } else {
+                bankAccount = msm.split("XXX-X-XX")[1].replace("-", "").substring(0, 4);
+            }
+            try {
+                if (msm.split("XXX-X-XX").length > 2) {
+                    String[] bankCodeContain = msm.split("XXX-X-XX")[1].split(" ");
+                    bankCode = bankCodeContain[bankCodeContain.length - 1];
+                } else {
+                    String[] bankCodeContain = msm.split("จากบัญชี")[1].split(" ");
+                    bankCode = bankCodeContain[1];
+                }
+            } catch (Exception e) {
+                log.warn("KTBBankAppNotifyThMsgParseServiceImpl msgParse get bankCode fail,msm:{}", msm, e);
+            }
+            BankMsmHandleDTO bankMsmHandleDTO = BankMsmHandleDTO.builder()
+                    .bankCode(bankCode)
+                    .bankAccount(bankAccount)
+                    .payTime(DateUtil.date())
+                    .amount(amount)
+                    .build();
+            log.debug("KTBBankAppNotifyThMsgParseServiceImpl.msgParse bankMsmHandleDTO:{}", bankMsmHandleDTO);
+            return bankMsmHandleDTO;
+        } catch (Exception e) {
+            log.error("msm 解析异常,msm:{}", msm, e);
+        }
+        return null;
+    }
+
+    private static BankMsmHandleDTO msgParse(String msm) {
+        try {
+            //ktbcs.netbank
+            //ได้รับ +5,000.00 บาท เข้าบัญชี XXX-X-XX310-8 จากบัญชี กรุงเทพ XXX-X-XX640-4
+            //รับเงินสำเร็จ
+            //2023-07-04 20:05:20
+            Assert.notEmpty(msm, "msm is empty");
+            if (!msm.contains("ได้รับ") && !msm.contains("รับเงินสำเร็จ")) {
+                return null;
+            }
+            String amountStr = msm.split("\\+")[1].split(" ")[0].replace(",", "");
+            Long amount = NumberUtil.mul(amountStr, "1000").longValue();
+            String bankAccount = msm.split("XXX-X-XX")[2].replace("-", "").substring(0,4);
+            String bankCode = "";
+            try {
+                String[] bankCodeContain = msm.split("XXX-X-XX")[1].split(" ");
+                bankCode = bankCodeContain[bankCodeContain.length - 1];
+            }catch (Exception e){
+                log.warn("KTBBankAppNotifyThMsgParseServiceImpl msgParse get bankCode fail,msm:{}",msm, e);
+            }
+
+            String redisKey = String.format("wn:ktb:notify:lock:%s:%s", bankAccount, amount);
+
+
+            BankMsmHandleDTO bankMsmHandleDTO = BankMsmHandleDTO.builder()
+                    .bankCode(bankCode)
+                    .bankAccount(bankAccount)
+                    .payTime(DateUtil.date())
+                    .amount(amount)
+                    .build();
+            log.debug("KTBBankAppNotifyThMsgParseServiceImpl.msgParse bankMsmHandleDTO:{}", bankMsmHandleDTO);
+            return bankMsmHandleDTO;
+        } catch (Exception e) {
+            log.error("msm 解析异常,msm:{}", msm, e);
+        }
+        return null;
+    }
+
+    @Data
+    @Builder
+    public static class BankMsmHandleDTO {
+        String bankCode;
+        String bankAccount;
+        Date payTime;
+        Long amount;
+    }
+
 
     private static String getBankCode2(String bankName){
 
