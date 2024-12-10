@@ -6,8 +6,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPObject;
 import com.rabbitmq.tools.json.JSONUtil;
 
+import java.net.URLEncoder;
 import java.util.*;
 import javax.crypto.Cipher;
+import javax.crypto.Mac;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -53,6 +55,8 @@ public class AesUtil {
 
     public static void main(String[] args) throws Exception {
 
+        validateSign("123321","1732541832", "");
+
         /**
          * {mchNo=M111,reqTime=1725637496635,
          *  sign=74411B9F5F3857DAE20FC780E6D589BE, signType=MD5,
@@ -88,5 +92,22 @@ public class AesUtil {
         String result = StrUtil.str(plaintext, StandardCharsets.UTF_8);
         System.out.println("解密数据："+ result);
 
+    }
+
+
+    private static void validateSign(String merchantNo, String timestamp, String sign) throws Exception {
+//        LambdaQueryWrapper<Merchant> qw = new LambdaQueryWrapper<>();
+//        qw.select(Merchant::getKey)
+//                .eq(Merchant::getMerchantNo, merchantNo).
+//                last(" limit 1");
+//        Merchant merchant = merchantDao.selectOne(qw);
+
+        String secret = "9d21c34fe8dd1e30bb4e7237f7f131cb";
+        String paramSign = timestamp + "\n" + secret;
+        Mac mac = Mac.getInstance("HmacSHA256");
+        mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+        byte[] signData = mac.doFinal(paramSign.getBytes(StandardCharsets.UTF_8));
+        String stringOfSigned = URLEncoder.encode(new String(Base64.getEncoder().encode(signData)), "UTF-8");
+        System.out.println(stringOfSigned);
     }
 }

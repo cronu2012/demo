@@ -21,6 +21,35 @@ import static com.rabbitmq.demo.utils.JavaJsonConvert.json2Java;
 @Slf4j
 public class AppleUtil {
 
+    public static void main(String... args){
+        String key = "G3RSYCPkxyG4Kun1akNyktmkUdXOt1ewMnQJOgdxodVToQWN3eBKcFqAqlht6XT7M8MiGWC9owdonrMdq9LgnOarjifacbryy7nQPvhtEfGDEHfR9IbDZWGJdUllgisy";
+
+        Map<String , String> paramMap = new TreeMap<>();
+        paramMap.put("ifCode","pqpay");
+        paramMap.put("amount","10000");
+        paramMap.put("payOrderId","P1866324159519862786");
+        paramMap.put("mchOrderNo","112269");
+        paramMap.put("subject","subject");
+        paramMap.put("wayCode","QRCODE");
+//        paramMap.put("sign","DFFB8DBF4AB9ED5CFDEE90988B0B881C");
+        paramMap.put("reqTime","1733802557752");
+        paramMap.put("body","body");
+        paramMap.put("createdAt","1733801328912");
+        paramMap.put("appId","6756d9afe4b002bb05d18198");
+        paramMap.put("clientIp","18.162.174.38");
+        paramMap.put("currency","THB");
+        paramMap.put("state","2");
+        paramMap.put("mchNo","M1733745071");
+
+
+        String paramSign = AppleUtil.convertMapToQueryStringIgnoreEmpty(paramMap) + "&key=" + key  ;
+        String sign = MD5Encoder.encode(paramSign, "UTF-8").toUpperCase();
+
+        log.info("paramMap:{}", paramMap);
+        log.info("paramSign:{}", paramSign);
+        log.info("sign:{}", sign);
+    }
+
     /**
      * 常量0,进行中
      */
