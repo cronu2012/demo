@@ -59,6 +59,31 @@ public class HttpUtils {
     }
 
     /**
+     * * get請求带参数 與表頭
+     * @param url
+     * @return
+     */
+    public static String doGet(String url, Map<String, String> paramMap,  Map<String, String> headers) {
+        Request.Builder builder = new Request.Builder()
+                .url(url + "?" + HttpUtils.formatUrlParam(paramMap));
+
+        if (headers != null) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                builder.addHeader(entry.getKey(), entry.getValue());
+            }
+        }
+
+        Request request = builder.build();
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            return response.body().string();
+        } catch (Exception e) {
+            log.info("HttpUtils请求出现异常", e);
+        }
+        return null;
+    }
+
+    /**
      * * post 表單提交
      * @param url
      * @param body
