@@ -1,4 +1,4 @@
-package com.rabbitmq.demo.utils;
+package com.rabbitmq.demo.utils.playgrount;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Assert;
