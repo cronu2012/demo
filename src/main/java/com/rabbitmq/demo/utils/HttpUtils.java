@@ -18,14 +18,20 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class HttpUtils {
+
     private static final OkHttpClient okHttpClient
             = new OkHttpClient().newBuilder()
             .readTimeout(15, TimeUnit.SECONDS).build();
 
+    private static final OkHttpClient okHttpClientPing
+            = new OkHttpClient().newBuilder()
+            .addInterceptor(new LoggingInterceptor())
+            .readTimeout(15, TimeUnit.SECONDS).build();
+
     /**
      * * get請求
-     * @param url URL
-     * @return String
+     * @param url
+     * @return
      */
     public static String doGet(String url) {
         Request request = new Request.Builder()
@@ -59,21 +65,24 @@ public class HttpUtils {
     }
 
     /**
-     * * get請求带参数 與表頭
+     * * get請求带参数 可帶請求頭
      * @param url
+     * @param paramMap
+     * @param headers
      * @return
      */
-    public static String doGet(String url, Map<String, String> paramMap,  Map<String, String> headers) {
-        Request.Builder builder = new Request.Builder()
+    public static String doGet(String url, Map<String, String> paramMap, Map<String, String> headers) {
+        Request.Builder requestBuilder = new Request.Builder()
                 .url(url + "?" + HttpUtils.formatUrlParam(paramMap));
 
+        // 增加 headers
         if (headers != null) {
             for (Map.Entry<String, String> entry : headers.entrySet()) {
-                builder.addHeader(entry.getKey(), entry.getValue());
+                requestBuilder.addHeader(entry.getKey(), entry.getValue());
             }
         }
 
-        Request request = builder.build();
+        Request request = requestBuilder.build();
         try {
             Response response = okHttpClient.newCall(request).execute();
             return response.body().string();
@@ -122,6 +131,67 @@ public class HttpUtils {
                 .url(url)
                 .post(builder.build())
                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                .build();
+        try {
+            Response response = okHttpClient.newCall(request).execute();
+            return response.body().string();
+        } catch (Exception e) {
+            log.info("HttpUtils请求出现异常", e);
+        }
+        return null;
+    }
+
+    /**
+     * post表單提交 ping
+     * @param url
+     * @param paramMap
+     * @return
+     */
+    public static String doPostPing(String url, Map<String, String> paramMap) {
+        if (paramMap == null)
+            throw new InvalidParameterException("Map不可为空");
+        FormBody.Builder builder = new FormBody.Builder();
+        for(Map.Entry<String, String> e : paramMap.entrySet()) {
+            if(e.getValue() != null)
+                builder.add(e.getKey(), e.getValue());
+        }
+        Request request = new Request.Builder()
+                .url(url)
+                .post(builder.build())
+                .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                .build();
+        try {
+            Response response = okHttpClientPing.newCall(request).execute();
+            return response.body().string();
+        } catch (Exception e) {
+            log.info("HttpUtils请求出现异常", e);
+        }
+        return null;
+    }
+
+
+    /**
+     * post表單提交 可帶請求頭
+     * @param url
+     * @param paramMap
+     * @param header
+     * @return
+     */
+    public static String doPost(String url, Map<String, String> paramMap, Map<String, String> header) {
+        if (paramMap == null)
+            throw new InvalidParameterException("Map不可为空");
+        if (header == null)
+            throw new InvalidParameterException("Header不可为空");
+        FormBody.Builder builder = new FormBody.Builder();
+        for(Map.Entry<String, String> e : paramMap.entrySet()) {
+            if(e.getValue() != null)
+                builder.add(e.getKey(), e.getValue());
+        }
+        header.put("Content-Type", "application/x-www-form-urlencoded");
+        Request request = new Request.Builder()
+                .url(url)
+                .post(builder.build())
+                .headers(Headers.of(header))
                 .build();
         try {
             Response response = okHttpClient.newCall(request).execute();
