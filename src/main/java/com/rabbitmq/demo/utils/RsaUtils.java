@@ -20,6 +20,9 @@ public class RsaUtils {
     public static final String ALGORITHM_RSA_SIGN = "SHA256WithRSA";
     public static final int ALGORITHM_RSA_PRIVATE_KEY_LENGTH = 2048;
 
+    private static String dataStr = "currency=THB&merchantNo=XP1059&merchantOrderNo=23621341&orderAmount=700.00&orderNo=237733&orderStatus=SUCCESS&payModel=PAYOUT";
+    private static String key = "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC3FUdyLwgtik8YFcb235WQd3TEu8DeO9xK53uQ3o4h3XcUWFRJYGoMc0/IQ74qp7j3FAH9AUml1g8T6BF9on+n/Ys3y8ojqGx5OSWQ/3LW70IVuTVUKa5w/0kbeefyfLUR9rBrTDZ1RFFHTB7whmZDxyw33Nw6XVsTwg8jRoG801I6P4RE8H7YwxnCe2m3x9WnZnOBZDLR575z6slFe3TwJTPR1IVFjeD2X0++gyeTc+7t7ehEFIQ1YLYU0c4ntZhTzaNU9uwm6k4cdBv7LxLBgDj6dCOfexvHeHlu2HSbqKlzuzq0r57wPSWht7mcotIX50ngoaq/ZxMWhQ/0wP81AgMBAAECggEAYwEu0aB9W6MfgnbEUVw3FRiEHJ8rfQIB7r+fIog3dDi+3FGnwsZQkssIqdN4UrjAXVyEdrzrhrJrFOi6DKaDQeTqFBIwDXhWsHcmyXJaN8DKi9TL8edYXeKvNhyGQasOf9hXLq7YBDIdgeC4GnmTc7ORReQ5c5ZoWhbm+Lx4DBOPuvNDl5Al3vwJlg32px+ytjgfaxN2ObGjkuxSiGsWm2PmDPvexPMNUBAPI8oAwKWhfLpY+5vPhbbU5tafUPVkQJBkAQgPnlGc469ysqlKeuvnSO+x1wvBg5KcQyLL5AJgfRhZwhAgC03FzvCKf2Tz4T46RGjxKkfIu9sRLOpjQQKBgQDrc49cvYlZzpEEH4DxoIK6l9qRZgqKOh0gnqKFYevtVDF4MWqgxexOFyvWunQuwOhjpB1NLhab+0JczjasT7B27B892Cw/rGddlKa7KcHR0pvRkOaJX0Kc11GHpDQY15M8r5YyaYYvJ7I1alKh/Z88XYVxqw9qZdHf1vx6xs95DwKBgQDHD7XUAU7kcHdeM/ikyCubp1WjNels3GL3Bkl/QrJTNOX4EPhtkLkigodFU2SUqDLEQAVh8tJ8Ykr/8+LcNmlMAmdI0H8yuzmVayp8bOerO3kErP+2oj8Flqqzr5qoOlR/JYLUjlsA3SGGfQqHRIWzCh05ntZmlQokFNvRkV7bewKBgCgsSXO7ayoFkryvW2Lezi9kJYjVbkrza3DbYEN917FgwigN1nGkE5OnZHV4zsYDaCNIJy+6A2WN017eWHnCBwvjcdktfy9GDUTsTh51G3rfgnKZVJxvwn/cRS7tl239qkOaefgUBS8aiM+QWpUFHxw/oLsqQrEWul6E4gNY1KGFAoGBAJ72Nb6SON0Fzt0EZae5TdGkBCgskjZjnAgmFiUxLtRxZr/9VVWxf5ZGZB2BZc2sr7W2ZlX8ogfAOqJAsUYnkViohrBIB3uMtYRTqv7nvO0ptg9800uWLvuYgMKzFa8HvZg3bU2uTI/ZBr+uNO0mVBpQllwAMriChjGgEpY9H2HnAoGADWOUXQfHPf+6vRJDaMtp05EHgR9XDf8OMMIA5YCk/ec1hjSkv/hK/D+S5Hq5LXuBVd+YEM9A/kZw/8hC918xEDOmF8O5TiFFZUMuTdVvYXsNDmMd6YwCaJvyQfmZXvcSUXmeKvImwc+Ytl4tDdG+0xksZEyqg4GYN3PhnxgfcDU=";
+
 
     /**
      * 初始化RSA算法密钥对
@@ -228,5 +231,18 @@ public class RsaUtils {
         System.out.println("RSA result:" + result);
     }
 
+    public String sign(String dataStr, String key) throws Exception {
+        byte[] keyBytes = Base64.getDecoder().decode(key);
 
+        PKCS8EncodedKeySpec pkcs8KeySpec = new PKCS8EncodedKeySpec(keyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PrivateKey priKey = keyFactory.generatePrivate(pkcs8KeySpec);
+
+        Signature signature = Signature.getInstance("MD5withRSA"); // 注意：MD5已经不安全，可以改SHA256withRSA
+        signature.initSign(priKey);
+        signature.update(dataStr.getBytes("UTF-8"));
+
+        byte[] signBytes = signature.sign();
+        return Base64.getEncoder().encodeToString(signBytes);
+    }
 }
