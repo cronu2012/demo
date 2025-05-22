@@ -26,8 +26,8 @@ import java.time.format.DateTimeFormatter;
 public class WebMvcConfig implements WebMvcConfigurer {
     @Value("${consumer-path}")
     private String consumerPath;
-    @Value("${server.servlet.context-path}")
-    private String contextPath;
+//    @Value("${server.servlet.context-path}")
+//    private String contextPath;
 
     @Value("${external-path}")
     private String externalPath;

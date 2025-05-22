@@ -27,6 +27,10 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+business-path: business
+consumer-path: consumer
+external-path: external
+callback-path: callback
 
 
 
